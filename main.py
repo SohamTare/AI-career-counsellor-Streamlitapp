@@ -7,13 +7,6 @@ nltk.download("punkt")
 nltk.download("punkt_tab")  # Safe to include even if not used
 nltk.download("averaged_perceptron_tagger")  # Often helpful
 
-try:
-    from nltk.tokenize import word_tokenize
-    nltk.download("punkt")
-    user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
-except:
-    user_keywords = interest.lower().split()
-
 # Load dataset
 df = pd.read_csv("interest_recommended_careers_with_descriptions.csv") 
 
