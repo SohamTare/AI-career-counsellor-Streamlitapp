@@ -13,86 +13,71 @@ df = pd.read_csv("interest_recommended_careers_with_descriptions.csv")
 # Page setup
 st.set_page_config(page_title="AI Career Counsellor", layout="centered")
 
-# Add gradient background and container styling
-st.markdown(
-    """
+st.markdown("""
     <style>
-    .stApp {
-        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-        background-attachment: fixed;
+    body {
+        background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
         font-family: 'Segoe UI', sans-serif;
     }
-
     .main-container {
-        background-color: rgba(255, 255, 255, 0.85);
+        background-color: #ffffffdd;
         padding: 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        max-width: 700px;
-        margin: 2rem auto 2.5rem auto;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-top: 30px;
     }
-
-    .stTextInput > div > div > input {
-        color: #333;
-        font-weight: 500;
+    .headline {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #2E3A59;
     }
-
-    h1, h2, h3, h4 {
-        color: #1c1c1c;
-        margin-bottom: 1.5rem;
+    .subtext {
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #6c757d;
     }
-
-    .stButton button {
-        background-color: #4a90e2;
+    .stButton > button {
+        background-color: #2E3A59;
         color: white;
-        font-weight: bold;
+        padding: 10px 20px;
         border-radius: 8px;
-    }
-
-    .stButton button:hover {
-        background-color: #357ABD;
+        font-size: 1rem;
     }
     </style>
+""", unsafe_allow_html=True)
 
-    <div class="main-container">
-        <h1>🎯 AI Virtual Career Counsellor</h1>
-    """,
-    unsafe_allow_html=True
-)
+# UI Components
+st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+st.markdown("<div class='headline'>🎯 AI Virtual Career Counsellor</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtext'>Get personalized career recommendations based on your interests.</div>", unsafe_allow_html=True)
 
-# Input Form
-with st.form("career_form"):
-    name = st.text_input("Your Name")
-    interest = st.text_input("What's something you enjoy or are interested in? (e.g., coding, design, biology)")
-    submitted = st.form_submit_button("Find My Career Path")
+name = st.text_input("👤 Enter Your Name:")
+interest = st.text_input("🧠 What are your interests? (e.g. coding, writing, biology)")
 
-if submitted:
-    if not interest.strip():
-        st.warning("Please enter an interest.")
-    else:
+if st.button("🔍 Get Career Recommendations"):
+    if name and interest:
         user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
 
-        matched_row = None
+        matched_rows = []
         for _, row in df.iterrows():
-            row_interest = row['Interest'].strip().lower()
-            if any(kw in row_interest for kw in user_keywords):
-                matched_row = row
-                break
+            row_keywords = [kw.strip().lower() for kw in row['keywords'].split(",")]
+            if any(keyword in row_keywords for keyword in user_keywords):
+                matched_rows.append(row)
 
-        if matched_row is not None:
-            st.success(f"🧠 Based on your interest, here's what we found!")
-
-            st.markdown(f"""
-            ### You seem to be interested in: **{matched_row['Interest'].title()}**
-
-            **🔍 Recommended Careers:**
-            - {', '.join([career.strip() for career in matched_row['Recommended_Careers'].split(',')])}
-
-            **📘 What it involves:**
-            > {matched_row['Description']}
-            """)
+        if matched_rows:
+            st.success(f"Here are some careers for {name.title()} based on your interests:")
+            for career in matched_rows:
+                st.markdown(f"""
+                <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;margin:10px 0;">
+                <strong>{career['Recommended_Careers']}</strong><br>
+                <small>{career['Description']}</small>
+                </div>
+                """, unsafe_allow_html=True)
         else:
-            st.error("Sorry! We couldn’t find a perfect match. Try rephrasing your interest or using a simpler keyword.")
-
-# Close the content wrapper div
-st.markdown("</div>", unsafe_allow_html=True)
+            st.warning("Sorry! We couldn't find a match. Try different keywords.")
+    else:
+        st.warning("Please fill in both your name and interests.")
+st.markdown("</div>", unsafe_allow_html=True) 
