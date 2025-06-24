@@ -14,70 +14,55 @@ df = pd.read_csv("interest_recommended_careers_with_descriptions.csv")
 st.set_page_config(page_title="AI Career Counsellor", layout="centered")
 
 st.markdown("""
-    <style>
-    body {
-        background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-        font-family: 'Segoe UI', sans-serif;
-    }
-    .main-container {
-        background-color: #ffffffdd;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        margin-top: 30px;
-    }
-    .headline {
-        font-size: 2.5rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 10px;
-        color: #2E3A59;
-    }
-    .subtext {
-        font-size: 1rem;
+    <div style='
+        background-color: white;
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         text-align: center;
         margin-bottom: 30px;
-        color: #6c757d;
-    }
-    .stButton > button {
-        background-color: #2E3A59;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 1rem;
-    }
-    </style>
+    '>
+        <h1 style='font-size: 2.8rem; color: #1e1e2f; font-weight: 800;'>🎯 AI Virtual Career Counsellor</h1>
+        <p style='font-size: 1.1rem; color: #5c5f70;'>Get personalized career recommendations based on your interests.</p>
+    </div>
 """, unsafe_allow_html=True)
 
-# UI Components
-st.markdown("<div class='main-container'>", unsafe_allow_html=True)
-st.markdown("<div class='headline'>🎯 AI Virtual Career Counsellor</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtext'>Get personalized career recommendations based on your interests.</div>", unsafe_allow_html=True)
-
+# Input form
 name = st.text_input("👤 Enter Your Name:")
 interest = st.text_input("🧠 What are your interests? (e.g. coding, writing, biology)")
 
 if st.button("🔍 Get Career Recommendations"):
-    if name and interest:
+    if interest.strip() != "":
+        # Scroll effect with anchor
+        st.markdown("<div id='result'></div>", unsafe_allow_html=True)
+
+        # Process
+        interest = interest.lower().strip()
         user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
 
-        matched_rows = []
-        for _, row in df.iterrows():
+        best_match = None
+        highest_match_count = 0
+        for index, row in df.iterrows():
             row_keywords = [kw.strip().lower() for kw in row['keywords'].split(",")]
-            if any(keyword in row_keywords for keyword in user_keywords):
-                matched_rows.append(row)
+            match_count = len(set(user_keywords) & set(row_keywords))
+            if match_count > highest_match_count:
+                highest_match_count = match_count
+                best_match = row
 
-        if matched_rows:
-            st.success(f"Here are some careers for {name.title()} based on your interests:")
-            for career in matched_rows:
-                st.markdown(f"""
-                <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;margin:10px 0;">
-                <strong>{career['Recommended_Careers']}</strong><br>
-                <small>{career['Description']}</small>
+        if best_match is not None:
+            st.markdown("""
+                <div style='
+                    background-color: #f9fafe;
+                    padding: 1.5rem;
+                    border-radius: 15px;
+                    margin-top: 2rem;
+                    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.03);
+                '>
+                    <h3 style='color: #2b2d42;'>You seem to be interested in: <span style="color:#1985a1;">{}</span></h3>
+                    <hr style='margin: 10px 0;' />
+                    <p><strong>💼 Recommended Careers:</strong> {}</p>
+                    <p><strong>📝 About this Career:</strong> {}</p>
                 </div>
-                """, unsafe_allow_html=True)
+            """.format(interest, best_match['Recommended_Careers'], best_match['Description']), unsafe_allow_html=True)
         else:
-            st.warning("Sorry! We couldn't find a match. Try different keywords.")
-    else:
-        st.warning("Please fill in both your name and interests.")
-st.markdown("</div>", unsafe_allow_html=True) 
+            st.error("Sorry! We couldn't find a matching career path.")
