@@ -41,13 +41,15 @@ if st.button("🔍 Get Career Recommendations"):
         user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
 
         best_match = None
-        highest_match_count = 0
-        for index, row in df.iterrows():
-            row_keywords = [kw.strip().lower() for kw in row['keywords'].split(",")]
-            match_count = len(set(user_keywords) & set(row_keywords))
-            if match_count > highest_match_count:
-                highest_match_count = match_count
-                best_match = row
+highest_match_count = 0
+
+for index, row in df.iterrows():
+    row_keywords = [kw.strip().lower() for kw in row['Interest'].split(",")]
+    match_count = len(set(user_keywords) & set(row_keywords))
+    
+    if match_count > highest_match_count:
+        highest_match_count = match_count
+        best_match = row
 
         if best_match is not None:
             st.markdown("""
