@@ -2,45 +2,55 @@ import streamlit as st
 import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
-import nltk
-nltk.download("punkt")
-nltk.download("punkt_tab")  # Safe to include even if not used
-nltk.download("averaged_perceptron_tagger")  # Often helpful
 
-# Load CSV
+# Download necessary NLTK data
+nltk.download("punkt")
+
+# Load the data
 @st.cache_data
 def load_data():
     df = pd.read_csv("interest_recommended_careers_with_descriptions.csv")
-    df.columns = df.columns.str.strip()  # remove extra spaces
+    df.columns = df.columns.str.strip()  # Clean column names
     return df
 
 df = load_data()
 
-# Style the app
+# ---------- Styling -----------
 st.markdown("""
     <style>
+        body {
+            background: linear-gradient(to bottom right, #f7f8fc, #dbefff);
+        }
         .title-box {
-            background-color: #f0f8ff;
-            padding: 25px;
-            border-radius: 10px;
+            background-color: #ffffffcc;
+            padding: 30px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0px 0px 10px #ccc;
-            margin-bottom: 20px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
         .result-box {
-            background-color: #e6f7ff;
+            background-color: #ffffffcc;
             padding: 20px;
             border-left: 6px solid #1f77b4;
-            border-radius: 8px;
-            margin-top: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 16px;
         }
         .stTextInput input {
-            font-size: 16px;
+            font-size: 16px !important;
+        }
+        .stButton button {
+            font-size: 16px !important;
+            background-color: #1f77b4;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Header
+# ---------- Header ------------
 st.markdown("""
     <div class="title-box">
         <h1>🎯 AI Virtual Career Counsellor</h1>
@@ -48,20 +58,23 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Inputs
+# ---------- User Inputs -------
 name = st.text_input("👤 Enter your name:", placeholder="e.g. Soham")
 interest = st.text_input("🧠 What are your interests?", placeholder="e.g. coding, writing, biology")
 
 if st.button("🔍 Get Career Recommendations"):
     if not name or not interest:
-        st.warning("Please enter both your name and interests.")
+        st.warning("⚠️ Please enter both your name and interests.")
     else:
         user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
         best_match = None
         highest_match_count = 0
 
         for _, row in df.iterrows():
-            row_keywords = [kw.strip().lower() for kw in str(row['Interest']).split(",")]
+            interest_value = row.get('Interest')
+            if pd.isna(interest_value):
+                continue
+            row_keywords = [kw.strip().lower() for kw in str(interest_value).split(",")]
             match_count = len(set(user_keywords) & set(row_keywords))
             if match_count > highest_match_count:
                 highest_match_count = match_count
