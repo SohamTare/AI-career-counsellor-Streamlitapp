@@ -6,7 +6,7 @@ from nltk.tokenize import word_tokenize
 nltk.download('punkt')
 
 # Load dataset
-df = pd.read_csv("D:\Projects\AI Virtual Career Counsellor\Data\interest_recommended_careers_with_descriptions.csv") 
+df = pd.read_csv("interest_recommended_careers_with_descriptions.csv") 
 
 # Page setup
 st.set_page_config(page_title="AI Career Counsellor", layout="centered")
