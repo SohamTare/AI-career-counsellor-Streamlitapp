@@ -80,7 +80,7 @@ if st.button("🔍 Get Career Recommendations"):
                 highest_match_count = match_count
                 best_match = row
 
-        if best_match and highest_match_count > 0:
+        if best_match is not None and highest_match_count > 0:
             st.markdown(f"""
                 <div class="result-box">
                     <h3>👋 Hi {name.title()}!</h3>
