@@ -59,7 +59,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------- User Inputs -------
-name = st.text_input("👤 Enter your name:", placeholder="e.g. Soham")
+name = st.text_input("👤 Enter your name:")
 interest = st.text_input("🧠 What are your interests?", placeholder="e.g. coding, writing, biology")
 
 if st.button("🔍 Get Career Recommendations"):
