@@ -1,6 +1,6 @@
-# trial-AI-career-counsellor
 
-# Al-VIRTUAL-CAREER-COUNSELLOR
+
+# Al-VIRTUAL-CAREER-COUNSELLOR STREAMLIT APP
 A smart AI-powered web app built using Streamlit that helps users discover personalized career paths based on their interests. It uses natural language processing techniques to analyze keywords and recommends suitable professions with descriptions from a curated dataset.
 
 ![image](https://github.com/user-attachments/assets/69b6f3ea-c786-4b9c-918e-7e59195fa5c0)
