@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
+import nltk
+
+nltk.download('punkt')
+
 
 nltk.download('punkt')
 
