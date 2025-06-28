@@ -3,8 +3,12 @@ import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
 
+import nltk
+from nltk.tokenize import word_tokenize
+
 # Download necessary NLTK data
-nltk.download("punkt")
+nltk.download("punkt")  # ✅ Only this is required
+
 
 # Load the data
 @st.cache_data
