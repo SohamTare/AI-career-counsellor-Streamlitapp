@@ -3,12 +3,11 @@ import pandas as pd
 import nltk
 from nltk.tokenize import word_tokenize
 
-import nltk
-from nltk.tokenize import word_tokenize
-
-# Download necessary NLTK data
-nltk.download("punkt")  # ✅ Only this is required
-
+# Safe NLTK download (handles Streamlit Cloud resets)
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 
 # Load the data
 @st.cache_data
