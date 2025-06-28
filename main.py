@@ -69,7 +69,7 @@ if st.button("🔍 Get Career Recommendations"):
     if not name or not interest:
         st.warning("⚠️ Please enter both your name and interests.")
     else:
-        user_keywords = [word.strip().lower() for word in word_tokenize(interest)]
+        user_keywords = [word.strip().lower() for word in interest.split()]
         best_match = None
         highest_match_count = 0
 
