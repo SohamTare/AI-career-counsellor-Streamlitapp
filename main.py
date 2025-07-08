@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import nltk
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize 
+import re
 
 # Safe NLTK download (handles Streamlit Cloud resets)
 try:
@@ -69,7 +70,7 @@ if st.button("🔍 Get Career Recommendations"):
     if not name or not interest:
         st.warning("⚠️ Please enter both your name and interests.")
     else:
-        user_keywords = [word.strip().lower() for word in interest.split()]
+        user_keywords = [kw.strip().lower() for kw in re.split(r'[,\s]+', interest) if kw.strip()]
         best_match = None
         highest_match_count = 0
 
@@ -77,7 +78,7 @@ if st.button("🔍 Get Career Recommendations"):
             interest_value = row.get('Interest')
             if pd.isna(interest_value):
                 continue
-            row_keywords = [kw.strip().lower() for kw in str(interest_value).split(",")]
+            row_keywords = [kw.strip().lower() for kw in re.split(r'[,\s&]+', str(interest_value)) if kw.strip()]
             match_count = len(set(user_keywords) & set(row_keywords))
             if match_count > highest_match_count:
                 highest_match_count = match_count
