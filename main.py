@@ -1,14 +1,5 @@
 import streamlit as st
 import pandas as pd
-import nltk
-from nltk.tokenize import word_tokenize 
-import re
-
-# Safe NLTK download (handles Streamlit Cloud resets)
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
 
 # Load the data
 @st.cache_data
@@ -70,27 +61,30 @@ if st.button("🔍 Get Career Recommendations"):
     if not name or not interest:
         st.warning("⚠️ Please enter both your name and interests.")
     else:
-        user_keywords = [kw.strip().lower() for kw in re.split(r'[,\s]+', interest) if kw.strip()]
-        best_match = None
-        highest_match_count = 0
+        # Normalize user input (split by commas, strip and lowercase)
+        user_keywords = [kw.strip().lower() for kw in interest.split(",") if kw.strip()]
+
+        matched_rows = []
 
         for _, row in df.iterrows():
             interest_value = row.get('Interest')
             if pd.isna(interest_value):
                 continue
-            row_keywords = [kw.strip().lower() for kw in re.split(r'[,\s&]+', str(interest_value)) if kw.strip()]
-            match_count = len(set(user_keywords) & set(row_keywords))
-            if match_count > highest_match_count:
-                highest_match_count = match_count
-                best_match = row
 
-        if best_match is not None and highest_match_count > 0:
-            st.markdown(f"""
-                <div class="result-box">
-                    <h3>👋 Hi {name.title()}!</h3>
-                    <p><strong>🎯 Recommended Careers:</strong> {best_match['Recommended_Careers']}</p>
-                    <p><strong>📄 Description:</strong> {best_match['Description']}</p>
-                </div>
-            """, unsafe_allow_html=True)
+            row_keywords = [kw.strip().lower() for kw in str(interest_value).split(",") if kw.strip()]
+
+            # If any user keyword is in row's interest list
+            if any(user_kw in row_keywords for user_kw in user_keywords):
+                matched_rows.append(row)
+
+        if matched_rows:
+            for match in matched_rows:
+                st.markdown(f"""
+                    <div class="result-box">
+                        <h3>👋 Hi {name.title()}!</h3>
+                        <p><strong>🎯 Recommended Careers:</strong> {match['Recommended_Careers']}</p>
+                        <p><strong>📄 Description:</strong> {match['Description']}</p>
+                    </div>
+                """, unsafe_allow_html=True)
         else:
             st.error("❌ No matching careers found. Try using broader or more common interest keywords.")
